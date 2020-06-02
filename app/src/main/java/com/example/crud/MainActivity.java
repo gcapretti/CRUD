@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
     private List<Persona> listPerson = new ArrayList<Persona>();
     ArrayAdapter<Persona> arrayAdapterPersona;
     //**********************************************************************************************
+    //
+    Persona personaSelected;
+    //**********************************************************************************************
     //AL CREAR EL ACTIVITY SE REALIZAN LAS SIGUIENTES ACCIONES:
     //-SE RECIBEN LOS DATOS INGRESADOS POR EL USUARIO EN LOS ATRIBUTOS ANTES DEFINIDOS
     //-SE LLAMA AL METODO inicializarFirebase(): PARA INICIALIZAR LA BASE DE DATOS
@@ -59,6 +62,18 @@ public class MainActivity extends AppCompatActivity {
         listV_personas = findViewById(R.id.lv_datosPersonas);
         inicializarFirebase();
         listarDatos();
+
+        listV_personas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                personaSelected = (Persona) parent.getItemAtPosition(position);
+                nomP.setText(personaSelected.getNombre());
+                appP.setText(personaSelected.getApellido());
+                correoP.setText(personaSelected.getCorreo());
+                passwordP.setText(personaSelected.getPassword());
+            }
+        });
+
 
     }
 
@@ -125,7 +140,15 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case R.id.icon_save:{
+                Persona p = new Persona();
+                p.setUid(personaSelected.getUid());
+                p.setNombre(nomP.getText().toString().trim());
+                p.setApellido(appP.getText().toString().trim());
+                p.setCorreo(correoP.getText().toString().trim());
+                p.setPassword(passwordP.getText().toString().trim());
+                databaseReference.child("Persona").child(p.getUid()).setValue(p);
                 Toast.makeText(this,"Actualizado", Toast.LENGTH_LONG).show();
+                limpiarCajas();
                 break;
             }
             case R.id.icon_delete:{
