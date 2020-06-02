@@ -43,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Persona> listPerson = new ArrayList<Persona>();
     ArrayAdapter<Persona> arrayAdapterPersona;
     //**********************************************************************************************
-    //
+    //SE CREA EL ATRIBUTO personaSelected PARA RECIBIR EL OBJETO DEL TIPO PERSONA UNA VEZ
+    //QUE SE HAGA CLICK EN LA LISTA
     Persona personaSelected;
     //**********************************************************************************************
     //AL CREAR EL ACTIVITY SE REALIZAN LAS SIGUIENTES ACCIONES:
@@ -63,6 +64,14 @@ public class MainActivity extends AppCompatActivity {
         inicializarFirebase();
         listarDatos();
 
+        obtenerPersonaAlHacerClick();
+
+
+    }
+
+    //**********************************************************************************************
+    //SE OBTIENE LA PERSONA UNA VEZ REALIZADO EL CLICK SOBRE LA LISTA
+    private void obtenerPersonaAlHacerClick() {
         listV_personas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -73,8 +82,6 @@ public class MainActivity extends AppCompatActivity {
                 passwordP.setText(personaSelected.getPassword());
             }
         });
-
-
     }
 
     //**********************************************************************************************
@@ -153,7 +160,11 @@ public class MainActivity extends AppCompatActivity {
             }
             case R.id.icon_delete:{
 
+                Persona p = new Persona();
+                p.setUid(personaSelected.getUid());
+                databaseReference.child("Persona").child(p.getUid()).removeValue();
                 Toast.makeText(this,"Eliminado", Toast.LENGTH_LONG).show();
+                limpiarCajas();
                 break;
             }
             default:break;
